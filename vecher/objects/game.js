@@ -1,16 +1,14 @@
-﻿var rect = {}, rect2 = {};
-rect.x = 100;
-rect.y = 100;
-rect.sizex = 300;
-rect.sizey = 200;
-rect.color = 'red';
-rect2.x = 100;
-rect2.y = 350;
-rect2.sizex = 300;
-rect2.sizey = 200;
-rect2.color = 'blue';
+﻿var rects = [];
+var color = ['red', 'green', 'blue', 'yellow', 'purple']
 
-var rects = [rect, rect2]
+for (var i=0; i<10; ++i){
+    rects[i] = {};
+    rects[i].x = Math.random()*800;
+    rects[i].y = Math.random()*600;
+    rects[i].sizex = Math.random()*100;
+    rects[i].sizey = Math.random()*100;
+    rects[i].color = color[Math.floor(Math.random()*5)];
+}
 
 function drawR(rect1){
     context.fillStyle = rect1.color;
@@ -21,8 +19,9 @@ function update() {
 }
 
 function draw() {
-    drawR(rects[0]);
-    drawR(rects[1]);
+    for (let i=0; i<10; ++i){
+        drawR(rects[i]);
+    }
 };
 
 function keyup(key) {
