@@ -1,18 +1,39 @@
-﻿var rects = [];
-var color = ['red', 'green', 'blue', 'yellow', 'purple']
-
-for (var i=0; i<10; ++i){
-    rects[i] = {};
-    rects[i].x = Math.random()*800;
-    rects[i].y = Math.random()*600;
-    rects[i].sizex = Math.random()*100;
-    rects[i].sizey = Math.random()*100;
-    rects[i].color = color[Math.floor(Math.random()*5)];
+﻿class Rect{
+    constructor(x_, y_, sizex_, sizey_, color_){
+        this.x = x_;
+        this.y = y_;
+        this.sizex = sizex_;
+        this.sizey = sizey_;
+        this.color = color_;
+    }
+    draw(){
+        context.fillStyle = this.color;
+        context.fillRect(this.x, this.y, this.sizex, this.sizey);
+    }
+}
+class Circle{
+    constructor(x_, y_, r_, color_){
+        this.x = x_;
+        this.y = y_;
+        this.r = r_;
+        this.color = color_;
+    }
+    draw(){
+        context.beginPath();
+        context.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        context.fillStyle = this.color;
+        context.fill();
+    }
 }
 
-function drawR(rect1){
-    context.fillStyle = rect1.color;
-    context.fillRect(rect1.x, rect1.y, rect1.sizex, rect1.sizey);
+var rects = [];
+var color = ['red', 'green', 'blue', 'yellow', 'purple']
+
+for (var i=0; i<5; ++i){
+    rects[i] = new Rect(Math.random()*700, Math.random()*500, 100, 100, color[Math.floor(Math.random()*2)]);
+}
+for (var i=5; i<10; ++i){
+    rects[i] = new Circle(Math.random()*750, Math.random()*550, 50, color[Math.floor(Math.random()*2)+2]);
 }
 
 function update() {
@@ -20,7 +41,7 @@ function update() {
 
 function draw() {
     for (let i=0; i<10; ++i){
-        drawR(rects[i]);
+        rects[i].draw();
     }
 };
 
