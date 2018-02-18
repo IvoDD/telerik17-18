@@ -25,6 +25,25 @@ class Circle{
         context.fill();
     }
 }
+class Polygon{
+    constructor(n_, x_, y_, size_, color_){
+        this.n = n_;
+        this.x = x_;
+        this.y = y_;
+        this.size = size_;
+        this.color = color_;
+    }
+    draw(){
+        let dang = Math.PI*2/this.n;
+        context.beginPath();
+        context.moveTo(this.x + this.size, this.y);
+        for (let ang = dang; ang < Math.PI*2; ang += dang){
+            context.lineTo(this.x + Math.cos(ang)*this.size, this.y + Math.sin(ang)*this.size);
+        }
+        context.fillStyle = this.color;
+        context.fill();
+    }
+}
 
 var rects = [];
 var color = ['red', 'green', 'blue', 'yellow', 'purple']
@@ -35,12 +54,15 @@ for (var i=0; i<5; ++i){
 for (var i=5; i<10; ++i){
     rects[i] = new Circle(Math.random()*750, Math.random()*550, 50, color[Math.floor(Math.random()*2)+2]);
 }
+for (let i=10; i<20; ++i){
+    rects[i] = new Polygon(Math.floor(Math.random()*5+3), Math.random()*800, Math.random()*600, 50, color[Math.floor(Math.random()*5)])
+}
 
 function update() {
 }
 
 function draw() {
-    for (let i=0; i<10; ++i){
+    for (let i=0; i<20; ++i){
         rects[i].draw();
     }
 };
