@@ -4,8 +4,13 @@
         this.y = y_;
         this.color = color_;
     }
-    moveLeft(){
-        this.x -= 10;
+    move(dx, dy){
+        this.x += dx;
+        this.y += dy;
+        if (this.x > 800){this.x = 800;}
+        if (this.x < 0){this.x = 0;}
+        if (this.y > 600){this.y = 600;}
+        if (this.y < 0){this.y = 0;}
     }
     draw(){
         context.beginPath();
@@ -14,35 +19,31 @@
         context.fill();
     }
 };
-
-class Parallelogram{
-    constructor(x_, y_, len_, wid_, ang_, color_){
-        this.x = x_;
-        this.y = y_;
-        this.len = len_;
-        this.wid = wid_;
-        this.ang = ang_;
-        this.color = color_;
-    }
-    draw(){
-        context.beginPath();
-        context.moveTo(this.x, this.y);
-        context.lineTo(this.x+this.len, this.y);
-        context.lineTo(this.x+this.len + Math.cos(this.ang)*this.wid, this.y + Math.sin(this.ang)*this.wid);
-        context.lineTo(this.x + Math.cos(this.ang)*this.wid, this.y + Math.sin(this.ang)*this.wid);
-        context.fillStyle = this.color;
-        context.fill();
-    }
-}
-
 var colors = ['blue', 'red', 'green', 'yellow', 'pink'];
 var tanks = [];
-tanks[0] = new Tank(100, 200, 'red');
+var rot = [];
+tanks[0] = new Tank(400, 300, 'red');
 for (let i=1; i<10; ++i){
-    tanks[i] = new Parallelogram(Math.random()*800, Math.random()*600, Math.random()*100+50, Math.random()*100+50, Math.random()*Math.PI, colors[Math.floor(Math.random()*5)])
+    tanks[i] = new Tank(Math.random()*800, Math.random()*600, 'blue');
+    rot[i] = Math.floor(Math.random()*2)*2-1; //-1 or 1
 }
+
+function dist(a, b){
+    return Math.sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y));
+}
+
 function update() {
-    
+    if (isKeyPressed[65]){tanks[0].move(-3, 0);}
+    if (isKeyPressed[68]){tanks[0].move(3, 0);}
+    if (isKeyPressed[83]){tanks[0].move(0, 3);}
+    if (isKeyPressed[87]){tanks[0].move(0, -3);}
+    for (let i=1; i<10; ++i){
+        let d = dist(tanks[0], tanks[i]);
+        let dx = (tanks[0].y-tanks[i].y)/d*3, dy = -(tanks[0].x - tanks[i].x)/d*3;
+        dx *= rot[i]; dy *= rot[i];
+        tanks[i].move(dx, dy);
+        if (Math.random()<0.01){rot[i]*=-1;}
+    }
 }
 
 function draw() {
