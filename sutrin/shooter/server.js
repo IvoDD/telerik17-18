@@ -10,7 +10,7 @@ app.get('/game.js', function(req, res){ //не пипай това, не ти т
 }); 
 
 var myX = [], myY = [], hp = [];
-var bX = [], bY = [], dx = [], dy = [];
+var bX = [], bY = [], dx = [], dy = []; //koi e izstrelial patrona
 var isConnected = [];
 var numClients = 0;
 
