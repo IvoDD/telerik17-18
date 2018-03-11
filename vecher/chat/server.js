@@ -16,6 +16,9 @@ io.on('connection', function(socket){
     ++numClients;
     console.log("number of clients is:", numClients);
     io.emit("number", numClients);
+    socket.on("key", function(key){
+        io.emit("natisna", key);
+    })
 });
 
 http.listen(3000, function(){
