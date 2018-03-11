@@ -4,17 +4,30 @@
     </head>
     <body>
         <!--<h1>Голям текст</h1>-->
-        <p style="text-align:center">Pesho</p>
-        <p id="gosho">Gosho</p>
+        <h1 id="gosho">Gosho</h1>
         <form>
-            <input id="in1" type="text" value="Bla bla bla"><br>
-            <input id="in2" type="text" value="text123">
+            <input id="in0" type="text" value=""><br>
+            <input id="in1" type="text" value=""><br>
+            <input id="in2" type="text" value=""><br>
+            <input id="in3" type="text" value=""><br>
+            <input id="in4" type="text" value=""><br>
+            <input id="in5" type="text" value=""><br>
+            <input id="in6" type="text" value=""><br>
+            <input id="in7" type="text" value=""><br>
+            <input id="in8" type="text" value=""><br>
+            <input id="in9" type="text" value="">
         </form>
         <button onclick="myFunc()">Button</button>
         <script>
             function myFunc(){
-                document.getElementById("gosho").innerHTML += "!";
-                document.getElementById("in2").value = document.getElementById("in1").value;
+                var max = "";
+                if (max.length < document.getElementById("in0").value.length) max = document.getElementById("in0").value;
+                if (max.length < document.getElementById("in1").value.length) max = document.getElementById("in1").value;
+                if (max.length < document.getElementById("in2").value.length) max = document.getElementById("in2").value;
+                document.getElementById("in0").value = max;
+                document.getElementById("in1").value = max;
+                document.getElementById("in2").value = max;
+                document.getElementById("gosho").style.color = max;
             }
         </script>
     </body>
