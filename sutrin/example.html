@@ -6,7 +6,8 @@
         <!--<h1>Голям текст</h1>-->
         <h1 id="gosho">Gosho</h1>
         <form>
-            <input id="in0" type="text" value=""><br>
+            <label>E-mail</label>
+            <input id="in0" type="text" value="" placeholder="pesho@example.com"><br>
             <input id="in1" type="text" value=""><br>
             <input id="in2" type="text" value=""><br>
             <input id="in3" type="text" value=""><br>
@@ -17,17 +18,27 @@
             <input id="in8" type="text" value=""><br>
             <input id="in9" type="text" value="">
         </form>
-        <button onclick="myFunc()">Button</button>
+        <button onclick="mySort()">Button</button>
         <script>
             function myFunc(){
                 var max = "";
-                if (max.length < document.getElementById("in0").value.length) max = document.getElementById("in0").value;
-                if (max.length < document.getElementById("in1").value.length) max = document.getElementById("in1").value;
-                if (max.length < document.getElementById("in2").value.length) max = document.getElementById("in2").value;
-                document.getElementById("in0").value = max;
-                document.getElementById("in1").value = max;
-                document.getElementById("in2").value = max;
+                for (let i=0; i<10; ++i){
+                    if (max.length < document.getElementById("in"+i).value.length) max = document.getElementById("in"+i).value;
+                }
+                for (let i=0; i<10; ++i){
+                    document.getElementById("in"+i).value = max;
+                }
                 document.getElementById("gosho").style.color = max;
+            }
+            function mySort(){
+                var colors = [];
+                for (let i=0; i<10; ++i){
+                    colors[i] = document.getElementById('in'+i).value;
+                }
+                colors.sort();
+                for (let i=0; i<10; ++i){
+                    document.getElementById('in'+i).value = colors[i];
+                }
             }
         </script>
     </body>
