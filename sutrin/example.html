@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <!--<h1>Голям текст</h1>-->
+        <p style="text-align:center">Pesho</p>
+        <p id="gosho">Gosho</p>
+        <form>
+            <input id="in1" type="text" value="Bla bla bla"><br>
+            <input id="in2" type="text" value="text123">
+        </form>
+        <button onclick="myFunc()">Button</button>
+        <script>
+            function myFunc(){
+                document.getElementById("gosho").innerHTML += "!";
+                document.getElementById("in2").value = document.getElementById("in1").value;
+            }
+        </script>
+    </body>
+</html>
