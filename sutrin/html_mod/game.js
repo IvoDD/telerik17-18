@@ -4,7 +4,13 @@ var username = "";
 
 function startgame(){
     username = document.getElementById('username').value;
+    password = document.getElementById('password').value;
     if (username == "") return;
+    if (localStorage["password"+username]){
+        if (password != localStorage["password"+username]) return;
+    }else{
+        localStorage["password"+username] = password;
+    }
     document.getElementById('form-id').style.display = 'none';
     document.getElementById('button-id').style.display = 'none';
     document.getElementById('canvas-id').style.display = 'block';
