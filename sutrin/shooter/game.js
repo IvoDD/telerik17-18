@@ -1,14 +1,24 @@
 // Creating variables
 var socket = io();
 
-var myX = [], myY = [], hp = [], bX = [], bY = [];
+var myX = [], myY = [], hp = [], user = [], bX = [], bY = [];
 var id;
 
-socket.on('init', function(id_, myX_, myY_, hp_, bX_, bY_){
+function startgame(){
+    let username = document.getElementById("username").value;
+    document.getElementById("form-id").style.display = "none";
+    document.getElementById("button-id").style.display = "none";
+    document.getElementById("canvas-id").style.display = "block";
+    socket.emit('user', username);
+    return false;
+}
+
+socket.on('init', function(id_, myX_, myY_, hp_, user_, bX_, bY_){
     id = id_;
     myX = myX_;
     myY = myY_;
     hp = hp_;
+    user = user_;
     bX = bX_;
     bY = bY_;
 });
@@ -21,6 +31,10 @@ socket.on('move', function(id_, x, y){
 socket.on('b', function(bX_, bY_){
     bX = bX_;
     bY = bY_;
+});
+
+socket.on('user', function(username, cid){
+    user[cid] = username;
 })
 
 function update() {
@@ -31,9 +45,11 @@ function update() {
 }
 
 function draw() {
+    context.font = "30px Arial";
     for (let i=0; i<myX.length; ++i){
         if (i == id){context.fillStyle = 'red';}
         else{context.fillStyle = 'blue';}
+        context.fillText(user[i], myX[i], myY[i]-20);
         context.fillRect(myX[i], myY[i], 30, 30);
     }
     for (let i=0; i<bX.length; ++i){

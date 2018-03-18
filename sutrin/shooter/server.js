@@ -9,6 +9,7 @@ app.get('/game.js', function(req, res){ //не пипай това, не ти т
     res.sendFile(__dirname + "/game.js");
 }); 
 
+var user = [];
 var myX = [], myY = [], hp = [];
 var bX = [], bY = [], dx = [], dy = []; //koi e izstrelial patrona
 var isConnected = [];
@@ -19,10 +20,13 @@ io.on('connection', function(socket){
     myX[id] = Math.random()*800;
     myY[id] = Math.random()*600;
     hp[id] = 50;
-    socket.emit('init', id, myX, myY, hp, bX, bY);
+    socket.emit('init', id, myX, myY, hp, user, bX, bY);
     io.emit('move', id, myX[id], myY[id]);
     
-    
+    socket.on('user', function(username){
+        user[id] = username;
+        io.emit('user', username, id)
+    });
     socket.on('ml', function(){
         myX[id] -= 3;
         io.emit('move', id, myX[id], myY[id]);
