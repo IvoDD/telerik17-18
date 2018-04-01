@@ -1,6 +1,7 @@
 // Creating variables
 var geometry = new THREE.BoxGeometry( 2, 3, 1.5 );
 var material = new THREE.MeshPhongMaterial({color: 'red'});
+var wmaterial = new THREE.MeshPhongMaterial();
 var cube = new THREE.Mesh( geometry, material );
 scene.add( cube );
 
@@ -28,6 +29,15 @@ scene.add( right_leg )
 camera.position.set(10, 8, 16);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
+var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
+var wall1 = new THREE.Mesh( wall_geometry, wmaterial );
+var wall2 = new THREE.Mesh( wall_geometry, wmaterial );
+wall1.position.set(0, -1.5, -5);
+wall2.position.set(-5, -1.5, 0);
+wall2.rotation.y = Math.PI/2;
+scene.add(wall1);
+scene.add(wall2);
+
 var light = new THREE.PointLight( );
 var light2 = new THREE.PointLight( );
 var light3 = new THREE.PointLight( ); 
@@ -42,7 +52,11 @@ parts = [cube, head, left_arm, right_arm, left_leg, right_leg];
 var alpha = Math.PI/2;
 var cx=0, cy=0 , cz=0, dy=0;
 
+//let asd = 0;
 function update() {
+    //asd += 0.02;
+    //light.position.x = Math.cos(asd) * 70;
+    //light.position.z = Math.sin(asd) * 70;
     cy += dy;
     if (cy < 0) cy=0;
     dy -= 0.01;
