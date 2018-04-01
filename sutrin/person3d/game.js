@@ -26,7 +26,7 @@ right_leg.position.set(-0.6, -3.5, 0);
 scene.add( left_leg )
 scene.add( right_leg )
 
-camera.position.set(10, 8, 16);
+camera.position.set(10*2, 8*2, 16*2);
 camera.lookAt(new THREE.Vector3(0, 0, 0));
 
 var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
