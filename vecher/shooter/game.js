@@ -4,6 +4,7 @@ var socket = io();
 var bX = [], bY = [], bId = [];
 var x = [], y = [];
 var id = -1;
+var isConnected = [];
 
 socket.on('id', function(cid, x_, y_){
     id = cid;
@@ -20,9 +21,13 @@ socket.on('bul', function(bX_, bY_, bId_){
     bX = bX_;
     bY = bY_;
     bId = bId_;
+});
+socket.on('conn', function(isConnected_){
+    isConnected = isConnected_;
 })
 
 function update() {
+    if (!isConnected[id]) return;
     let haveMoved = 0;
     if (isKeyPressed[87]){y[id]-=5; haveMoved=1;}
     if (isKeyPressed[83]){y[id]+=5; haveMoved=1;}
@@ -35,6 +40,7 @@ function update() {
 
 function draw() {
     for (let i=0; i<x.length; ++i){
+        if (!isConnected[i]) continue;
         if (i == id){context.fillStyle = 'red';}
         else{context.fillStyle = 'blue';}
         context.fillRect(x[i], y[i], 30, 30);
@@ -50,5 +56,6 @@ function keyup(key) {
 	
 }
 function mouseup() {
+    if (!isConnected[id]) return;
     socket.emit('shoot', mouseX, mouseY);
 }

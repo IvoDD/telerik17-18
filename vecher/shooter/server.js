@@ -13,12 +13,25 @@ var bX = [], bY = [], bId = [];
 var dx = [], dy = [];
 var x = [], y = []
 var num_clients = 0;
+var isConnected = [];
 var vel = 10;
 io.on('connection', function(socket){
-    let cid = num_clients++, x_ = Math.random()*800, y_ = Math.random()*600;
+    let cid = -1;
+    for (let i=0; i<isConnected.length; ++i){
+        if (!isConnected[i]){
+            cid = i;
+            break;
+        }
+    }
+    if (cid == -1){
+        cid = num_clients++;
+    }
+    let x_ = Math.random()*800, y_ = Math.random()*600;
     x[cid] = x_;
     y[cid] = y_;
+    isConnected[cid] = 1;
     socket.emit('id', cid, x, y);
+    io.emit('conn', isConnected);
     io.emit('coord', cid, x_, y_);
     socket.on('move', function(id, x1, y1){
         x[id] = x1;
@@ -26,9 +39,8 @@ io.on('connection', function(socket){
         io.emit('coord', id, x1, y1);
     });
     socket.on('disconnect', function(){
-        x[cid] = -100;
-        y[cid] = -100;
-        io.emit('coord', cid, -100, -100);
+        isConnected[cid] = 0;
+        io.emit('conn', isConnected);
     });
     socket.on('shoot', function(tX, tY){
         bX.push(x[cid]);
@@ -66,10 +78,9 @@ function upd(){
             --i;
         }
         for (let j=0; j<x.length; ++j){
-            if (j!=bId[i] && areColliding(bX[i], bY[i], 10, 10, x[j], y[j], 30, 30)){
-                x[j] = -100000000;
-                y[j] = -100000000;
-                io.emit('coord', j, x[j], y[j]);
+            if (isConnected[j] && j!=bId[i] && areColliding(bX[i], bY[i], 10, 10, x[j], y[j], 30, 30)){
+                isConnected[j] = 0;
+                io.emit('conn', isConnected);
                 bX[i] = bX[bX.length-1]; bX.pop();
                 bY[i] = bY[bY.length-1]; bY.pop();
                 bId[i] = bId[bId.length-1]; bId.pop();
