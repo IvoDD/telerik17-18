@@ -74,11 +74,14 @@ function areColliding(Ax, Ay, Awidth, Aheight, Bx, By, Bwidth, Bheight) {
 }
 
 function init() {
-
+    var canvas = document.getElementsByTagName("canvas")[0]
+    canvas.requestPointerLock = canvas.requestPointerLock ||
+                            canvas.mozRequestPointerLock;
 	window.addEventListener("mousemove", function(e) {
 		// update mouse coordinates
 		mouseX=e.pageX;
 		mouseY=e.pageY;
+        mouseMove(e);
 	});
 
 	// add eventlisteners for defined functions

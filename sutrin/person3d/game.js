@@ -1,4 +1,5 @@
 // Creating variables
+var canvas = document.getElementsByTagName('canvas')[0];
 var geometry = new THREE.BoxGeometry( 2, 3, 1.5 );
 var material = new THREE.MeshPhongMaterial({color: 'red'});
 var wmaterial = new THREE.MeshPhongMaterial();
@@ -68,8 +69,8 @@ function update() {
         cz += 0.05*Math.sin(-Math.PI/2-alpha);
         cx += 0.05*Math.cos(-Math.PI/2-alpha);
     }
-    if (isKeyPressed[65]) alpha += 0.05;
-    if (isKeyPressed[68]) alpha -= 0.05;
+    //if (isKeyPressed[65]) alpha += 0.05;
+    //if (isKeyPressed[68]) alpha -= 0.05;
     for (let i=0; i<parts.length; ++i){
         parts[i].rotation.y = alpha;
     }
@@ -82,10 +83,18 @@ function update() {
 }
 
 function keyup(key) {
+    if (key == 27) document.exitPointerLock();
 	if (key == 32 && cy<=0) dy=0.2;
 	console.log("Pressed", key);
 }
+function mouseMove(e){
+    //console.log(e.movementX, e.movementY);
+    alpha -= e.movementX*0.01;
+}
 function mouseup() {
+    if (document.pointerLockElement !== canvas){
+        canvas.requestPointerLock();
+    }
 	// Show coordinates of mouse on click
 	console.log("Mouse clicked at", mouseX, mouseY);
 }
