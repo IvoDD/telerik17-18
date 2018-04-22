@@ -13,7 +13,7 @@ scene.add( light );
 scene.add( light2 );
 
 var cx = 0, cy = 0, cz = 16;
-var alpha=0, beta=0;
+var alpha=-Math.PI/2, beta=0;
 function updateCamera(){
     camera.position.set(cx, cy, cz);
     camera.lookAt(new THREE.Vector3(Math.cos(beta)*Math.cos(alpha) + cx, Math.sin(beta) + cy, Math.cos(beta)*Math.sin(alpha) + cz));
@@ -41,6 +41,8 @@ function mouseup() {
 }
 function mouseMove(mx, my){
     alpha += mx/300;
-    beta += my/300;
+    beta -= my/300;
+    if (beta >= Math.PI/2) beta = Math.PI/2;
+    if (beta <= -Math.PI/2) beta = -Math.PI/2;
     updateCamera();
 }
