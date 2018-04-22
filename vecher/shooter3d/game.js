@@ -4,10 +4,12 @@ var geometry = [new THREE.BoxGeometry( 10, 6, 1 ), new THREE.BoxGeometry( 1, 6, 
 var material = new THREE.MeshPhongMaterial();
 
 var nw = 200;
+var wall = [], t = [];
 for (let i=0; i<nw; ++i){
-    let wall = new THREE.Mesh( geometry[Math.floor(Math.random()*2)], material );
-    wall.position.set(Math.random()*500-250, 0, Math.random()*500-250);
-    scene.add(wall);
+    t[i] = Math.floor(Math.random()*2)
+    wall[i] = new THREE.Mesh( geometry[t[i]], material );
+    wall[i].position.set(Math.random()*500-250, 0, Math.random()*500-250);
+    scene.add(wall[i]);
 }
 
 var light = new THREE.PointLight( );
@@ -25,9 +27,13 @@ function updateCamera(){
     camera.lookAt(new THREE.Vector3(Math.cos(beta)*Math.cos(alpha) + cx, Math.sin(beta) + cy, Math.cos(beta)*Math.sin(alpha) + cz));
 }
 var vel = 0.5;
+var onwall;
 function update() {
+    let oldy = cy;
     cy += dy;
     dy -= 0.01;
+    let oldx = cx;
+    let oldz = cz;
     if (cy<0) {cy=0;}
     if (isKeyPressed[87]){
         cx += Math.cos(alpha)*vel;
@@ -45,6 +51,28 @@ function update() {
         cx += Math.cos(alpha-Math.PI/2)*vel;
         cz += Math.sin(alpha-Math.PI/2)*vel;
     }
+    onwall = false;
+    for (let i=0; i<nw; ++i){
+        if (t[i] == 0){
+            if(areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1) && cy <= wall[i].position.y+4){
+                cx = oldx;
+                cy = oldy;
+                dy = 0;
+                cz = oldz;
+                onwall = true;
+                break;
+            }
+        }else{
+            if(areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10) && cy <= wall[i].position.y+4){
+                cx = oldx;
+                cy = oldy;
+                dy = 0;
+                cz = oldz;
+                onwall = true;
+                break;
+            }
+        }
+    }
     updateCamera();
 }
 
@@ -53,7 +81,7 @@ function keyup(key) {
     if (key == 27){
         document.exitPointerLock();
     }
-    if (cy==0 && key == 32){
+    if ((cy==0 || onwall) && key == 32){
         dy = 0.5;
     }
 	console.log("Pressed", key);
