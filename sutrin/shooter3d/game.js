@@ -1,24 +1,34 @@
 // Creating variables
 var canvas = document.getElementsByTagName('canvas')[0];
-var geometry = new THREE.BoxGeometry( 2, 3, 1.5 );
+var geometry = new THREE.BoxGeometry( 2, 2, 2 );
 var material = new THREE.MeshPhongMaterial({color: 'red'});
 var wmaterial = new THREE.MeshPhongMaterial();
 
+var nw = 500;
+var wall = [];
 var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
-var wall1 = new THREE.Mesh( wall_geometry, wmaterial );
-var wall2 = new THREE.Mesh( wall_geometry, wmaterial );
-wall1.position.set(0, -1.5, -5);
-wall2.position.set(-5, -1.5, 0);
-wall2.rotation.y = Math.PI/2;
-scene.add(wall1);
-scene.add(wall2);
+for (let i=0; i<500; ++i){
+    wall[i] = new THREE.Mesh(wall_geometry, wmaterial);
+    wall[i].position.set(Math.random()*1000-500, 0, Math.random()*1000-500);
+    if (Math.random()>0.5){wall[i].rotation.y = Math.PI/2;}
+    scene.add(wall[i]);
+}
+
+var ne = 50;
+var enemy = [], er = [];
+for (let i=0; i<ne; ++i){
+    enemy[i] = new THREE.Mesh(geometry, material);
+    enemy[i].position.set(Math.random()*1000-500, 0, Math.random()*1000-500);
+    scene.add(enemy[i]);
+    er[i] = 0;
+}
 
 var light = new THREE.PointLight( );
 var light2 = new THREE.PointLight( );
 var light3 = new THREE.PointLight( ); 
-light.position.set(-100,100,100);
-light2.position.set(100, 100, -50);
-light3.position.set(0, -100, 50);
+light.position.set(-1000,1000,1000);
+light2.position.set(1000, 1000, -500);
+light3.position.set(0, -1000, 500);
 scene.add( light );
 scene.add( light2 );
 scene.add( light3 );
@@ -34,22 +44,43 @@ updateCamera();
 
 function update() {
     dy-=0.01;
+    oldx = cx;
+    oldz = cz;
     cy+=dy;
     if (cy<0) cy=0;
     if (isKeyPressed[87]){
-        cx += Math.cos(alpha)*velocity;
-        cz += Math.sin(alpha)*velocity;
+        cx += Math.cos(alpha)*velocity*5;
+        cz += Math.sin(alpha)*velocity*5;
     }if (isKeyPressed[83]){
-        cx += Math.cos(alpha+Math.PI)*velocity;
-        cz += Math.sin(alpha+Math.PI)*velocity;
+        cx += Math.cos(alpha+Math.PI)*velocity*5;
+        cz += Math.sin(alpha+Math.PI)*velocity*5;
     }if (isKeyPressed[65]){
-        cx += Math.cos(alpha-Math.PI/2)*velocity;
-        cz += Math.sin(alpha-Math.PI/2)*velocity;
+        cx += Math.cos(alpha-Math.PI/2)*velocity*5;
+        cz += Math.sin(alpha-Math.PI/2)*velocity*5;
     }if (isKeyPressed[68]){
-        cx += Math.cos(alpha+Math.PI/2)*velocity;
-        cz += Math.sin(alpha+Math.PI/2)*velocity;
+        cx += Math.cos(alpha+Math.PI/2)*velocity*5;
+        cz += Math.sin(alpha+Math.PI/2)*velocity*5;
+    }
+    let collision = false;
+    for (let i=0; i<nw; ++i){
+        if (wall[i].rotation.y > 0){
+            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10)) collision = true;
+        }else{
+            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1)) collision = true;
+        }
+    }
+    if (collision){
+        cx = oldx;
+        cz = oldz;
     }
     updateCamera();
+    for (let i=0; i<ne; ++i){
+        if (Math.random()<0.03){
+            er[i] = Math.random()*0.1-0.05;
+        }
+        enemy[i].rotateY(er[i]);
+        enemy[i].position.set(enemy[i].position.x + Math.cos(enemy[i].rotation.y)*velocity, enemy[i].position.y, enemy[i].position.z + Math.sin(enemy[i].rotation.y)*velocity)
+    }
 }
 
 function keyup(key) {
