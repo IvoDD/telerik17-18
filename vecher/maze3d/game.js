@@ -3,14 +3,22 @@ var canvas = document.getElementsByTagName("canvas")[0];
 var geometry = [new THREE.BoxGeometry( 10, 6, 1 ), new THREE.BoxGeometry( 1, 6, 10 )];
 var material = new THREE.MeshPhongMaterial();
 
-var nw = 200;
+var nw = 0;
 var wall = [], t = [];
 
-for (let i=0; i<nw; ++i){
-    t[i] = Math.floor(Math.random()*2)
-    wall[i] = new THREE.Mesh( geometry[t[i]], material );
-    wall[i].position.set(Math.random()*500-250, 0, Math.random()*500-250);
-    scene.add(wall[i]);
+function addWall(type, x, z){
+    t[nw] = type;
+    wall[nw] = new THREE.Mesh(geometry[type], material);
+    wall[nw].position.set(x, 0, z);
+    scene.add(wall[nw]);
+    ++nw;
+}
+
+for (let x=-225; x<=225; x+=9){
+    for (let z=-225; z<=225; z+=9){
+        if (x<225) addWall(0, x, z-4.5);
+        if (z<225) addWall(1, x-4.5, z);
+    }
 }
 
 var light = new THREE.PointLight( );
@@ -74,8 +82,8 @@ function keyup(key) {
     if (key == 27){
         document.exitPointerLock();
     }
-    if ((cy==0 || onwall) && key == 32){
-        dy = 0.5;
+    if (key==32){
+        cy = 150-cy;
     }
 	console.log("Pressed", key);
 }
