@@ -6,7 +6,7 @@
 	</head>
 	<body onload="init()">
         <div style="position:absolute; left:50%; top:50%;">
-            <div id="plus" style="position:relative; top:-0.5em; left:-50%; z-index: 2; font-size: 3em; color: green;">+</div>
+            <div id="plus" style="position:relative; top:-0.5em; left:-50%; z-index: 2; font-size: 3em; color: yellow;">+</div>
         </div>
 		<script src="three.min.js"></script>
 		<script src="ThreeCSG.js"></script> <!-- Включване на библиотека за CSG -->
@@ -34,7 +34,7 @@ for(i=0;i<256;++i)
 var renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight-5 );
 document.body.appendChild( renderer.domElement );
-renderer.setClearColor( 'black' );
+renderer.setClearColor( 'lightblue' );
 
 var scene = new THREE.Scene();
 			

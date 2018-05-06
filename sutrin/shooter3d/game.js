@@ -6,7 +6,13 @@ var wmaterial = new THREE.MeshPhongMaterial();
 var bgeometry = new THREE.SphereGeometry(0.3, 10, 10);
 var bmaterial = new THREE.MeshPhongMaterial({color: 'blue'});
 
-let bvel = 4;
+var floorg = new THREE.BoxGeometry(1000, 1, 1000);
+var floorm = new THREE.MeshBasicMaterial({color: 'green'});
+var floor = new THREE.Mesh(floorg, floorm);
+floor.position.set(0, -5, 0)
+scene.add(floor);
+
+let bvel = 2;
 var nw = 500;
 var wall = [];
 var bullet = [], dx = [], dy2 = [], dz = [];
@@ -70,12 +76,12 @@ function update() {
     let collisionz = false;
     for (let i=0; i<nw; ++i){
         if (wall[i].rotation.y > 0){
-            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10) && cy<5) {
+            if (areColliding(cx-0.3, cz-0.3, 0.6, 0.6, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10) && cy<4.3) {
                 if (oldx-1 > wall[i].position.x + 0.5 || oldx+1 < wall[i].position.x - 0.5) collisionx = true;
                 if (oldz-1 > wall[i].position.z + 5 || oldz+1 < wall[i].position.z - 5) collisionz = true;
             }
         }else{
-            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1) && cy<5){
+            if (areColliding(cx-0.3, cz-0.3, 0.6, 0.6, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1) && cy<4.3){
                 if (oldx-1 > wall[i].position.x + 5 || oldx+1 < wall[i].position.x - 5) collisionx = true;
                 if (oldz-1 > wall[i].position.z + 0.5 || oldz+1 < wall[i].position.z - 0.5) collisionz = true;
             }
@@ -97,6 +103,31 @@ function update() {
         bullet[i].position.x += dx[i];
         bullet[i].position.y += dy2[i];
         bullet[i].position.z += dz[i];
+        let bcol = false;
+        for (let j=0; j<nw; ++j){
+            if (wall[j].rotation.y > 0){
+                if (areColliding(bullet[i].position.x-1, bullet[i].position.z-1, 2, 2, wall[j].position.x-0.5, wall[j].position.z-5, 1, 10) && bullet[i].position.y<5) {
+                    bcol = true;
+                    break;
+                }
+            }else{
+                if (areColliding(bullet[i].position.x-1, bullet[i].position.z-1, 2, 2, wall[j].position.x-5, wall[j].position.z-0.5, 10, 1) && bullet[i].position.y<5){
+                    bcol = true;
+                    break;
+                }
+            }
+        }
+        if (bcol || cy<-5){
+            scene.remove(bullet[i]);
+            bullet[i] = bullet[bullet.length-1];
+            dx[i] = dx[bullet.length-1];
+            dy2[i] = dy2[bullet.length-1];
+            dz[i] = dz[bullet.length-1];
+            bullet.pop();
+            dx.pop();
+            dy2.pop();
+            dz.pop();
+        }
     }
 }
 
