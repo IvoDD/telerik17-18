@@ -50,21 +50,22 @@ function update() {
         cx += Math.cos(alpha-Math.PI/2)*vel;
         cz += Math.sin(alpha-Math.PI/2)*vel;
     }
+    let colx = false, colz = false;
     for (let i=0; i<nw; ++i){
         if (t[i] == 0){
             if(areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1) && cy <= wall[i].position.y+4){
-                cx = oldx;
-                cz = oldz;
-                break;
+                if (oldx-1 > wall[i].position.x+5 || oldx+1 < wall[i].position.x-5) colx=true;
+                if (oldz-1 > wall[i].position.z+0.5 || oldz+1 < wall[i].position.z-0.5) colz=true;
             }
         }else{
             if(areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10) && cy <= wall[i].position.y+4){
-                cx = oldx;
-                cz = oldz;
-                break;
+                if (oldx-1 > wall[i].position.x+0.5 || oldx+1 < wall[i].position.x-0.5) colx=true;
+                if (oldz-1 > wall[i].position.z+5 || oldz+1 < wall[i].position.z-5) colz=true;
             }
         }
     }
+    if (colx) cx = oldx;
+    if (colz) cz = oldz;
     updateCamera();
 }
 
