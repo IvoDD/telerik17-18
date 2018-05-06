@@ -3,9 +3,13 @@ var canvas = document.getElementsByTagName('canvas')[0];
 var geometry = new THREE.BoxGeometry( 2, 2, 2 );
 var material = new THREE.MeshPhongMaterial({color: 'red'});
 var wmaterial = new THREE.MeshPhongMaterial();
+var bgeometry = new THREE.SphereGeometry(0.3, 10, 10);
+var bmaterial = new THREE.MeshPhongMaterial({color: 'blue'});
 
+let bvel = 4;
 var nw = 500;
 var wall = [];
+var bullet = [], dx = [], dz = [];
 var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
 for (let i=0; i<500; ++i){
     wall[i] = new THREE.Mesh(wall_geometry, wmaterial);
@@ -15,10 +19,11 @@ for (let i=0; i<500; ++i){
 }
 
 var ne = 50;
-var enemy = [], er = [];
+var enemy = [], er = [], ang = [];
 for (let i=0; i<ne; ++i){
     enemy[i] = new THREE.Mesh(geometry, material);
     enemy[i].position.set(Math.random()*1000-500, 0, Math.random()*1000-500);
+    ang[i] = Math.random()*2*Math.PI;
     scene.add(enemy[i]);
     er[i] = 0;
 }
@@ -65,12 +70,12 @@ function update() {
     let collisionz = false;
     for (let i=0; i<nw; ++i){
         if (wall[i].rotation.y > 0){
-            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10)) {
+            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10) && cy<5) {
                 if (oldx-1 > wall[i].position.x + 0.5 || oldx+1 < wall[i].position.x - 0.5) collisionx = true;
                 if (oldz-1 > wall[i].position.z + 5 || oldz+1 < wall[i].position.z - 5) collisionz = true;
             }
         }else{
-            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1)){
+            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1) && cy<5){
                 if (oldx-1 > wall[i].position.x + 5 || oldx+1 < wall[i].position.x - 5) collisionx = true;
                 if (oldz-1 > wall[i].position.z + 0.5 || oldz+1 < wall[i].position.z - 0.5) collisionz = true;
             }
@@ -83,8 +88,14 @@ function update() {
         if (Math.random()<0.03){
             er[i] = Math.random()*0.1-0.05;
         }
-        enemy[i].rotateY(er[i]);
-        enemy[i].position.set(enemy[i].position.x + Math.cos(enemy[i].rotation.y)*velocity, enemy[i].position.y, enemy[i].position.z + Math.sin(enemy[i].rotation.y)*velocity)
+        ang[i] += er[i];
+        enemy[i].rotation.y = -ang[i];
+        //if (i) console.log(enemy[i].rotation.y);
+        enemy[i].position.set(enemy[i].position.x + Math.cos(ang[i])*velocity, enemy[i].position.y, enemy[i].position.z + Math.sin(ang[i])*velocity)
+    }
+    for (let i=0; i<bullet.length; ++i){
+        bullet[i].position.x += dx[i];
+        bullet[i].position.z += dz[i];
     }
 }
 
@@ -104,6 +115,12 @@ function mouseup() {
     if (document.pointerLockElement !== canvas){
         canvas.requestPointerLock();
     }
+    bullet.push(new THREE.Mesh(bgeometry, bmaterial));
+    bullet[bullet.length-1].position.set(cx, cy, cz);
+    scene.add(bullet[bullet.length-1]);
+    
+    dx.push(Math.cos(alpha)*bvel);
+    dz.push(Math.sin(alpha)*bvel);
 	// Show coordinates of mouse on click
 	console.log("Mouse clicked at", mouseX, mouseY);
 }
