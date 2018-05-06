@@ -9,7 +9,7 @@ var bmaterial = new THREE.MeshPhongMaterial({color: 'blue'});
 let bvel = 4;
 var nw = 500;
 var wall = [];
-var bullet = [], dx = [], dz = [];
+var bullet = [], dx = [], dy2 = [], dz = [];
 var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
 for (let i=0; i<500; ++i){
     wall[i] = new THREE.Mesh(wall_geometry, wmaterial);
@@ -95,6 +95,7 @@ function update() {
     }
     for (let i=0; i<bullet.length; ++i){
         bullet[i].position.x += dx[i];
+        bullet[i].position.y += dy2[i];
         bullet[i].position.z += dz[i];
     }
 }
@@ -119,8 +120,9 @@ function mouseup() {
     bullet[bullet.length-1].position.set(cx, cy, cz);
     scene.add(bullet[bullet.length-1]);
     
-    dx.push(Math.cos(alpha)*bvel);
-    dz.push(Math.sin(alpha)*bvel);
+    dx.push(Math.cos(alpha)*Math.cos(beta)*bvel);
+    dy2.push(Math.sin(beta)*bvel);
+    dz.push(Math.sin(alpha)*Math.cos(beta)*bvel);
 	// Show coordinates of mouse on click
 	console.log("Mouse clicked at", mouseX, mouseY);
 }

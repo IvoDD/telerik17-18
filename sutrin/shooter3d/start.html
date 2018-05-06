@@ -5,7 +5,9 @@
 		<style>canvas {width: 100%; height: 100%}</style>
 	</head>
 	<body onload="init()">
-
+        <div style="position:absolute; left:50%; top:50%;">
+            <div id="plus" style="position:relative; top:-0.5em; left:-50%; z-index: 2; font-size: 3em; color: green;">+</div>
+        </div>
 		<script src="three.min.js"></script>
 		<script src="ThreeCSG.js"></script> <!-- Включване на библиотека за CSG -->
 		<!--<canvas id="canvas-id"/>-->
@@ -30,7 +32,7 @@ for(i=0;i<256;++i)
 // gridSize = 50; // uncomment or add to game.js if you want a grid
 
 var renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize( window.innerWidth, window.innerHeight-5 );
 document.body.appendChild( renderer.domElement );
 renderer.setClearColor( 'black' );
 
