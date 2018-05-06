@@ -61,18 +61,23 @@ function update() {
         cx += Math.cos(alpha+Math.PI/2)*velocity*5;
         cz += Math.sin(alpha+Math.PI/2)*velocity*5;
     }
-    let collision = false;
+    let collisionx = false;
+    let collisionz = false;
     for (let i=0; i<nw; ++i){
         if (wall[i].rotation.y > 0){
-            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10)) collision = true;
+            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-0.5, wall[i].position.z-5, 1, 10)) {
+                if (oldx-1 > wall[i].position.x + 0.5 || oldx+1 < wall[i].position.x - 0.5) collisionx = true;
+                if (oldz-1 > wall[i].position.z + 5 || oldz+1 < wall[i].position.z - 5) collisionz = true;
+            }
         }else{
-            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1)) collision = true;
+            if (areColliding(cx-1, cz-1, 2, 2, wall[i].position.x-5, wall[i].position.z-0.5, 10, 1)){
+                if (oldx-1 > wall[i].position.x + 5 || oldx+1 < wall[i].position.x - 5) collisionx = true;
+                if (oldz-1 > wall[i].position.z + 0.5 || oldz+1 < wall[i].position.z - 0.5) collisionz = true;
+            }
         }
     }
-    if (collision){
-        cx = oldx;
-        cz = oldz;
-    }
+    if (collisionx) cx = oldx;
+    if (collisionz) cz = oldz;
     updateCamera();
     for (let i=0; i<ne; ++i){
         if (Math.random()<0.03){
