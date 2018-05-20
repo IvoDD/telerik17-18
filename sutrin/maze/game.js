@@ -10,13 +10,27 @@ scene.add(floor);
 var wall = [];
 var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
 
-var nw=500;
+var n=20;
+var nw=0;
 
-for (let i=0; i<nw; ++i){
-    wall[i] = new THREE.Mesh(wall_geometry, wmaterial);
-    wall[i].position.set(Math.random()*1000-500, 0, Math.random()*1000-500);
-    if (Math.random()>0.5){wall[i].rotation.y = Math.PI/2;}
-    scene.add(wall[i]);
+function addWall(x, z, rot){
+    if (Math.random() < 0.5) return;
+    wall[nw] = new THREE.Mesh(wall_geometry, wmaterial);
+    wall[nw].position.set(x, 0, z);
+    wall[nw].rotation.y = rot;
+    scene.add(wall[nw]);
+    ++nw;
+}
+
+for (let i=0; i<=n; ++i){
+    for (let j=0; j<n; ++j){
+        addWall(j*9+4.5, i*9, 0);
+    }
+}
+for (let i=0; i<n; ++i){
+    for (let j=0; j<=n; ++j){
+        addWall(j*9, i*9+4.5, Math.PI/2);
+    }
 }
 
 var light = new THREE.PointLight( );
@@ -31,7 +45,7 @@ scene.add( light3 );
 
 var cx=0, cy=0, cz=0;
 var alpha=0, beta=0;
-var velocity=0.3;
+var velocity=0.1;
 
 function updateCamera(){   
     camera.position.set(cx, cy, cz);
@@ -82,8 +96,8 @@ function keyup(key) {
 }
 function mouseMove(e){
     //console.log(e.movementX, e.movementY);
-    alpha += e.movementX*0.003;
-    beta -= e.movementY*0.003;
+    alpha += e.movementX*0.0015;
+    beta -= e.movementY*0.0015;
     if (beta > Math.PI/2-0.001) beta = Math.PI/2-0.001;
     if (beta < -Math.PI/2+0.001) beta = -Math.PI/2+0.001;
 }
