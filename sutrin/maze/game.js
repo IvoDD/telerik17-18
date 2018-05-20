@@ -12,9 +12,79 @@ var wall_geometry = new THREE.BoxGeometry(10, 8, 1);
 
 var n=20;
 var nw=0;
+var green = [];
+var cand = [];
+var hasWall1 = [], hasWall2 = [];
+for (let i=0; i<=n; ++i){
+    hasWall1[i] = [];
+    for (let j=0; j<n; ++j){
+        hasWall1[i][j] = true;
+    }
+}
+for (let i=0; i<n; ++i){
+    hasWall2[i] = [];
+    for (let j=0; j<=n; ++j){
+        hasWall2[i][j] = true;
+    }
+}
+for (let i=0; i<n; ++i){
+    green[i] = [];
+    for (let j=0; j<n; ++j){
+        green[i][j]=false;
+    }
+}
+
+function addCell(i, j){
+    green[i][j]=true;
+    cand.push({i: i, j: j, t: 1});
+    cand.push({i: i+1, j: j, t: 1});
+    cand.push({i: i, j: j, t: 2});
+    cand.push({i: i, j: j+1, t: 2});
+}
+
+addCell(n/2, n/2);
+while (cand.length > 0){
+    let ind = Math.floor( Math.random()*cand.length )
+    let cw = cand[ind];
+    cand[ind] = cand[cand.length-1];
+    cand.pop();
+    if (cw.t == 1){
+        if (cw.i==0 || cw.i==n) continue;
+        if (!green[cw.i][cw.j]) {
+            addCell(cw.i, cw.j);
+            hasWall1[cw.i][cw.j]=false;
+        }
+        if (!green[cw.i-1][cw.j]) {
+            addCell(cw.i-1, cw.j);
+            hasWall1[cw.i][cw.j]=false;
+        }
+    }else{
+        if (cw.j==0 || cw.j==n) continue;
+        if (!green[cw.i][cw.j]) {
+            addCell(cw.i, cw.j);
+            hasWall2[cw.i][cw.j]=false;
+        }
+        if (!green[cw.i][cw.j-1]) {
+            addCell(cw.i, cw.j-1);
+            hasWall2[cw.i][cw.j]=false;
+        }
+    }
+}
+if (Math.random() < 0.5){
+    if (Math.random() < 0.5){
+        hasWall1[0][Math.floor(Math.random()*n)] = false;
+    }else{
+        hasWall1[n][Math.floor(Math.random()*n)] = false;
+    }
+}else{
+    if (Math.random() < 0.5){
+        hasWall2[Math.floor(Math.random()*n)][0] = false;
+    }else{
+        hasWall2[Math.floor(Math.random()*n)][n] = false;
+    }
+}
 
 function addWall(x, z, rot){
-    if (Math.random() < 0.5) return;
     wall[nw] = new THREE.Mesh(wall_geometry, wmaterial);
     wall[nw].position.set(x, 0, z);
     wall[nw].rotation.y = rot;
@@ -24,12 +94,12 @@ function addWall(x, z, rot){
 
 for (let i=0; i<=n; ++i){
     for (let j=0; j<n; ++j){
-        addWall(j*9+4.5, i*9, 0);
+        if(hasWall1[i][j]) addWall(j*9+4.5, i*9, 0);
     }
 }
 for (let i=0; i<n; ++i){
     for (let j=0; j<=n; ++j){
-        addWall(j*9, i*9+4.5, Math.PI/2);
+        if(hasWall2[i][j]) addWall(j*9, i*9+4.5, Math.PI/2);
     }
 }
 
@@ -43,7 +113,7 @@ scene.add( light );
 scene.add( light2 );
 scene.add( light3 );
 
-var cx=0, cy=0, cz=0;
+var cx=n/2*9+4, cy=0, cz=n/2*9+4;
 var alpha=0, beta=0;
 var velocity=0.1;
 
