@@ -1,18 +1,42 @@
 var socket = io();
 
 var canvas = document.getElementsByTagName('canvas')[0];
-var geometry = new THREE.BoxGeometry( 2, 2, 2 );
+var geometry = new THREE.BoxGeometry( 2, 3, 1.5 );
 var material = new THREE.MeshPhongMaterial({color: 'red'});
+var head_geometry = new THREE.BoxGeometry(1, 1, 1);
+var arm_geometry = new THREE.BoxGeometry(0.5, 3.5, 0.75);
+var leg_geometry = new THREE.BoxGeometry(0.8, 4, 1);
 
 class Player{
     constructor(x, y, z, alpha, beta){
-        this.m = new THREE.Mesh(geometry, material);
+        this.h = new THREE.Mesh(head_geometry, material);
+        this.b = new THREE.Mesh(geometry, material);
+        this.la = new THREE.Mesh(arm_geometry, material);
+        this.ra = new THREE.Mesh(arm_geometry, material);
+        this.ll = new THREE.Mesh(leg_geometry, material);
+        this.rl = new THREE.Mesh(leg_geometry, material);
         this.move(x, y, z, alpha, beta);
-        scene.add(this.m);
+        scene.add(this.h);
+        scene.add(this.b);
+        scene.add(this.la);
+        scene.add(this.ra);
+        scene.add(this.ll);
+        scene.add(this.rl);
     }
     move(x, y, z, alpha, beta){
-        this.m.position.set(x, y, z);
-        this.m.rotation.y = alpha;
+        alpha = Math.PI/2 - alpha;
+        this.b.position.set(x, y, z);
+        this.h.position.set(x, y+2, z);
+        this.la.position.set(x + Math.cos(-alpha)*1.25, y-0.5, z + Math.sin(-alpha)*1.25)
+        this.ra.position.set(x + Math.cos(Math.PI-alpha)*1.25, y-0.5, z + Math.sin(Math.PI-alpha)*1.25);
+        this.ll.position.set(x + Math.cos(-alpha)*0.6, y-3.5, z + Math.sin(-alpha)*0.6);
+        this.rl.position.set(x + Math.cos(Math.PI-alpha)*0.6, y-3.5, z + Math.sin(Math.PI-alpha)*0.6);
+        this.h.rotation.y = alpha;
+        this.b.rotation.y = alpha;
+        this.la.rotation.y = alpha;
+        this.ra.rotation.y = alpha;
+        this.ll.rotation.y = alpha;
+        this.rl.rotation.y = alpha;
         //this.m.rotation.y = beta;
     }
 }
