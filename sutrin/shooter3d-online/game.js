@@ -6,6 +6,8 @@ var material = new THREE.MeshPhongMaterial({color: 'red'});
 var head_geometry = new THREE.BoxGeometry(1, 1, 1);
 var arm_geometry = new THREE.BoxGeometry(0.5, 3.5, 0.75);
 var leg_geometry = new THREE.BoxGeometry(0.8, 4, 1);
+var bg = new THREE.SphereGeometry(1, 10, 10);
+var bm = new THREE.MeshPhongMaterial({color: 'blue'});
 
 class Player{
     constructor(x, y, z, alpha, beta){
@@ -75,6 +77,16 @@ socket.on('newpl', function(pid, pl){
 socket.on('mv', function(pid, pl){
     p[pid].move(pl.x, pl.y, pl.z, pl.alpha, pl.beta);
 });
+var bullets = [];
+socket.on('b', function(b){
+    for (let i=0; i<bullets.length; ++i) scene.remove(bullets[i]);
+    bullets = [];
+    for (let i=0; i<b.length; ++i){
+        bullets[i] = new THREE.Mesh(bg, bm);
+        bullets[i].position.set(b[i].x, b[i].y, b[i].z);
+        scene.add(bullets[i]);
+    }
+})
 
 var light = new THREE.PointLight( );
 var light2 = new THREE.PointLight( );
@@ -137,5 +149,7 @@ function mouseMove(e){
 function mouseup() {
     if (document.pointerLockElement !== canvas){
         canvas.requestPointerLock();
+    }else{
+        socket.emit('shoot', alpha, beta);
     }
 }
