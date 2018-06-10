@@ -6,7 +6,7 @@ var material = new THREE.MeshPhongMaterial({color: 'red'});
 var head_geometry = new THREE.BoxGeometry(1, 1, 1);
 var arm_geometry = new THREE.BoxGeometry(0.5, 3.5, 0.75);
 var leg_geometry = new THREE.BoxGeometry(0.8, 4, 1);
-var bg = new THREE.SphereGeometry(1, 10, 10);
+var bg = new THREE.SphereGeometry(0.5, 10, 10);
 var bm = new THREE.MeshPhongMaterial({color: 'blue'});
 
 class Player{
@@ -41,6 +41,14 @@ class Player{
         this.rl.rotation.y = alpha;
         //this.m.rotation.y = beta;
     }
+    kill(){
+        scene.remove(this.h);
+        scene.remove(this.b);
+        scene.remove(this.la);
+        scene.remove(this.ra);
+        scene.remove(this.ll);
+        scene.remove(this.rl);
+    }
 }
 
 var floorg = new THREE.BoxGeometry(1000, 1, 1000);
@@ -54,6 +62,7 @@ var id = -1;
 var velocity = 0.1;
 var alpha = Math.PI/2, beta = 0;
 var cx=1, cy=0 , cz=1, dy=0;
+var dead = false;
 
 socket.on('init', function(cid, pl){
     id = cid;
@@ -65,7 +74,8 @@ socket.on('init', function(cid, pl){
             alpha = pl[i].alpha;
             beta = pl[i].beta;
         }else{
-            p[i] = new Player(pl[i].x, pl[i].y, pl[i].z, pl[i].alpha, pl[i].beta);
+            if (!pl[i].dead)
+                p[i] = new Player(pl[i].x, pl[i].y, pl[i].z, pl[i].alpha, pl[i].beta);
         }
     }
 });
@@ -73,6 +83,11 @@ socket.on('init', function(cid, pl){
 socket.on('newpl', function(pid, pl){
     p[pid]=new Player(pl.x, pl.y, pl.z, pl.alpha, pl.beta);
 });
+
+socket.on('dead', function(pid){
+    if (pid!=id) p[pid].kill();
+    else dead=true;
+})
 
 socket.on('mv', function(pid, pl){
     p[pid].move(pl.x, pl.y, pl.z, pl.alpha, pl.beta);
@@ -106,6 +121,7 @@ updateCamera();
 
 var oldx, oldy, oldz, oldalpha, oldbeta;
 function update() {
+    if (dead) return;
     if (id == -1) return;
     dy-=0.01;
     oldx = cx;
@@ -135,6 +151,7 @@ function update() {
 }
 
 function keyup(key) {
+    if (dead) return;
     if (key == 27) document.exitPointerLock();
 	if (key == 32 && cy<=0) dy=0.5;
 	console.log("Pressed", key);
@@ -150,6 +167,7 @@ function mouseup() {
     if (document.pointerLockElement !== canvas){
         canvas.requestPointerLock();
     }else{
+        if (dead) return;
         socket.emit('shoot', alpha, beta);
     }
 }
